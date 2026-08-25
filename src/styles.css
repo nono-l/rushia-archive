@@ -1,0 +1,102 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme {
+  --color-bg: #0a0f0e;
+  --color-bg-elevated: #101816;
+  --color-surface: #15201c;
+  --color-surface-hover: #1a2923;
+  --color-fg: #e8f2ee;
+  --color-muted: #8aa399;
+  --color-faint: #5a7168;
+  --color-primary: #4fd1a5;
+  --color-primary-dim: #2a9d78;
+  --color-accent: #f0a0c0;
+  --color-accent-dim: #c07090;
+  --color-border: #243830;
+  --color-border-strong: #355a48;
+  --color-card: #121c19;
+  --color-glow: #4fd1a533;
+  --color-danger: #e07070;
+  --radius-sm: 0.5rem;
+  --radius: 0.875rem;
+  --radius-lg: 1.25rem;
+  --font-sans: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+  --font-display: "Shippori Mincho", "Noto Serif JP", "Hiragino Mincho ProN", serif;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    color-scheme: dark;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-primary) 35%, transparent);
+    color: var(--color-fg);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes soft-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.45s ease-out both;
+}
+
+.bg-mesh {
+  background:
+    radial-gradient(ellipse 80% 50% at 10% -10%, #4fd1a522, transparent 55%),
+    radial-gradient(ellipse 60% 40% at 90% 0%, #f0a0c018, transparent 50%),
+    radial-gradient(ellipse 50% 30% at 50% 100%, #2a9d7812, transparent 45%),
+    var(--color-bg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up {
+    animation: none;
+  }
+}
