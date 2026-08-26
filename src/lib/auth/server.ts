@@ -89,6 +89,10 @@ export const authConfigured =
 // it derives the origin per-request from the (proxied) host, validated against the
 // preview allowlist, which makes the OAuth `redirect_uri` the concrete preview URL
 // the broker's preview client accepts.
+//
+// Custom domains (e.g. russia.vtuder.online) MUST also be derived from the request.
+// A static BETTER_AUTH_URL of `*.grok.me` would mint OAuth redirect_uri + __Host-
+// cookies for grok.me while visitors on the custom domain stay signed out.
 const explicitBaseURL = env("BETTER_AUTH_URL");
 // Explicit `string[]` (not a readonly tuple) — Better Auth's DynamicBaseURLConfig
 // requires a mutable `allowedHosts: string[]`.
@@ -101,27 +105,54 @@ const LOCAL_DEV_ORIGINS: string[] = [
   "http://127.0.0.1:8080",
   "http://[::1]:8080",
 ];
-const baseURL = explicitBaseURL ?? {
-  // Include loopback hosts so dynamic baseURL resolves for local email/password
-  // (not only the preview wildcard).
-  allowedHosts: [...previewAllowedHosts, "localhost", "127.0.0.1", "[::1]"],
+const PRODUCTION_HOSTS: string[] = [
+  "russia.vtuder.online",
+  "*.vtuder.online",
+  "timber-spruce-sky-tulip.grok.me",
+  "*.grok.me",
+];
+const PRODUCTION_ORIGINS: string[] = [
+  "https://russia.vtuder.online",
+  "https://*.vtuder.online",
+  "https://timber-spruce-sky-tulip.grok.me",
+  "https://*.grok.me",
+];
+function hostFromOrigin(origin: string | undefined): string | undefined {
+  if (!origin) return undefined;
+  try {
+    return new URL(origin).host;
+  } catch {
+    return undefined;
+  }
+}
+const explicitHost = hostFromOrigin(explicitBaseURL);
+const allowedHosts: string[] = [
+  ...previewAllowedHosts,
+  ...PRODUCTION_HOSTS,
+  ...(explicitHost && !PRODUCTION_HOSTS.includes(explicitHost)
+    ? [explicitHost]
+    : []),
+  "localhost",
+  "127.0.0.1",
+  "[::1]",
+];
+const baseURL = {
+  allowedHosts,
   // `auto` → trust both http:// and https:// expansions of allowedHosts
-  // (preview is https; local dev is http).
+  // (preview is https; local dev is http; production custom domain is https).
   protocol: "auto" as const,
-  fallback: "http://localhost:8080",
+  fallback: explicitBaseURL ?? "http://localhost:8080",
 };
 
 // Origins Better Auth accepts on credentialed POSTs (sign-up/sign-in, etc.).
-// Missing entries here surface as FORBIDDEN "Invalid origin".
-const trustedOrigins: string[] = explicitBaseURL
-  ? [explicitBaseURL, ...LOCAL_DEV_ORIGINS]
-  : [
-      // Host wildcards (matched against Origin's host)
-      ...previewAllowedHosts,
-      // Full-origin wildcards (matched against Origin)
-      ...previewAllowedHosts.flatMap((host) => [`https://${host}`, `http://${host}`]),
-      ...LOCAL_DEV_ORIGINS,
-    ];
+// Missing entries here surface as FORBIDDEN "Invalid origin" / INVALID_CALLBACK_URL.
+const trustedOrigins: string[] = [
+  ...PRODUCTION_ORIGINS,
+  ...(explicitBaseURL ? [explicitBaseURL] : []),
+  ...previewAllowedHosts,
+  ...previewAllowedHosts.flatMap((host) => [`https://${host}`, `http://${host}`]),
+  ...LOCAL_DEV_ORIGINS,
+];
 
 const databaseUrl = env("DATABASE_URL");
 

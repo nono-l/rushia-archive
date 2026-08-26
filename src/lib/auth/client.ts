@@ -93,8 +93,11 @@ export async function signIn(
   providerId: string,
   opts: { callbackURL?: string; errorCallbackURL?: string } = {},
 ): Promise<void> {
-  const callbackURL = opts.callbackURL ?? "/";
-  const errorCallbackURL = opts.errorCallbackURL ?? "/";
+  const origin =
+    typeof window !== "undefined" ? window.location.origin : "";
+  const callbackURL = opts.callbackURL ?? (origin ? `${origin}/` : "/");
+  const errorCallbackURL =
+    opts.errorCallbackURL ?? (origin ? `${origin}/login` : "/");
 
   // Open the popup SYNCHRONOUSLY on the user gesture — before any await
   // (including signOut). Awaiting first drops user-gesture privilege in some

@@ -42,7 +42,16 @@ function LoginPage() {
                 onClick={() => {
                   setError(null);
                   setBusy(p.providerId);
-                  void signIn(p.providerId, { callbackURL: "/" })
+                  void signIn(p.providerId, {
+                    callbackURL:
+                      typeof window !== "undefined"
+                        ? `${window.location.origin}/`
+                        : "/",
+                    errorCallbackURL:
+                      typeof window !== "undefined"
+                        ? `${window.location.origin}/login`
+                        : "/login",
+                  })
                     .catch((err: unknown) => {
                       setError(
                         err instanceof Error ? err.message : "ログインに失敗しました",
