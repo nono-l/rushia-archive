@@ -23,6 +23,46 @@ const remote = (id: string) =>
 /** Collected from @Miru620_fandead media — 一日一回るーちゃんツイート & special posts */
 export const ARCHIVE: ArchiveEntry[] = [
   {
+    id: "2094039933539565721",
+    tweetId: "2094039933539565721",
+    postedAt: "2026-08-30",
+    streamDate: null,
+    title: "しばらく低浮上",
+    note: "シリーズ休止の理由：仕事のストレス・プライベート・多忙。しばらく低浮上になるかも、との告知。",
+    tags: ["告知", "特別"],
+    year: null,
+    media: [m("announce-2026-08-30")],
+    likes: 9,
+    special: true,
+    kind: "special",
+  },
+  {
+    id: "2092952774136705218",
+    tweetId: "2092952774136705218",
+    postedAt: "2026-08-27",
+    streamDate: "2021-01-28",
+    title: "ポケモン剣盾・交換とガチバトル",
+    note: "ポケモン剣盾で交換やガチバトルをしていた時のスクショ。",
+    tags: ["ゲーム", "ポケモン"],
+    year: 2021,
+    media: [m("HQumtTbbAAA9XiY")],
+    likes: 41,
+    kind: "daily",
+  },
+  {
+    id: "2092590383037383094",
+    tweetId: "2092590383037383094",
+    postedAt: "2026-08-26",
+    streamDate: "2020-07-10",
+    title: "PIEN",
+    note: "ホラーゲームPIENをやっていた時のスクショ。",
+    tags: ["ゲーム", "ホラー"],
+    year: 2020,
+    media: [m("HQpayUbbcAAZJJo")],
+    likes: 29,
+    kind: "daily",
+  },
+  {
     id: "2092227997034229777",
     tweetId: "2092227997034229777",
     postedAt: "2026-08-25",
@@ -32,7 +72,7 @@ export const ARCHIVE: ArchiveEntry[] = [
     tags: ["ゲーム", "朝活"],
     year: 2020,
     media: [m("HQkVcq7awAAODa_")],
-    likes: 29,
+    likes: 38,
     kind: "daily",
   },
 
@@ -879,7 +919,7 @@ export const META = {
   series: "一日一回るーちゃんツイート",
   seriesStart: "2026-02",
   seriesReliableFrom: "2026-05-29",
-  collectedAt: "2026-08-26",
+  collectedAt: "2026-08-31",
   localMedia: true,
   notes: [
     "元アカウント @Miru620_fandead のメディア欄・投稿から収集",
@@ -891,11 +931,13 @@ export const META = {
     "本人談: 2022/6/4〜2025/12/31 はアカウント休止（大学生活）",
     "本人談: 2022/2/24 引退発表は国公立受験前日と重なった",
     "本人談: 2026/8/17〜24 は仕事多忙のため休止。当初「8/25(土)再開」と告知したが 8/21 に訂正（正しい土曜は 8/22）。8/24 に「明日から再開」と再告知し、8/25 にシリーズ再開",
+    "本人談: 2026/8/30 に低浮上告知。理由は仕事ストレス・プライベート・多忙。シリーズは 8/28〜 未投稿",
   ],
   gaps: [
     "2026-02〜05上旬の「一日一回」シリーズ（検索で未検出）",
     "2026-05-30 / 06-06 / 06-13 / 06-21〜23 / 06-25 / 07-01 / 07-06 / 07-11〜12 / 07-16 / 07-18〜22 / 07-28 / 07-30 / 08-01 / 08-08 / 08-12 / 08-15 — 休止または未検出",
     "2026-08-16〜24 — 本人告知：仕事多忙のため休止。8/25 にシリーズ再開（初の朝活・壺おじ）",
+    "2026-08-28〜29 — 未検出。8/30 に低浮上告知（仕事・プライベート）。8/31 時点でシリーズ再開なし",
   ],
   milestones: [
     { date: "2019-07-18", label: "ホロライブ3期生としてデビュー" },
@@ -914,6 +956,7 @@ export function tweetUrl(id: string) {
 
 export function mediaFallback(localPath: string) {
   const id = localPath.replace(/^\/archive-media\//, "").replace(/\.jpg$/, "");
+  if (id.startsWith("announce-")) return localPath;
   return remote(id);
 }
 
