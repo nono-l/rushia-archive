@@ -23,6 +23,34 @@ const remote = (id: string) =>
 /** Collected from @Miru620_fandead media — 一日一回るーちゃんツイート & special posts */
 export const ARCHIVE: ArchiveEntry[] = [
   {
+    id: "2096517643880804723",
+    tweetId: "2096517643880804723",
+    postedAt: "2026-09-06",
+    streamDate: "2022-02-14",
+    title: "一番いいねが多かった投稿",
+    note: "Xのいいね順でるーちゃんアカウントを見たところ、最多は2022/2/14の発信。国公立前期11日前で精神的に辛かった、との思い出。",
+    tags: ["思い出", "特別"],
+    year: 2022,
+    media: [m("memory-2026-09-06")],
+    likes: 21,
+    special: true,
+    kind: "memory",
+  },
+  {
+    id: "2096493607649980523",
+    tweetId: "2096493607649980523",
+    postedAt: "2026-09-06",
+    streamDate: null,
+    title: "ようやく暇ができた",
+    note: "低浮上後の近況。明日からまた仕事、今日は暇ができたのでXを見る、との投稿。",
+    tags: ["告知", "特別"],
+    year: null,
+    media: [m("announce-2026-09-06")],
+    likes: 12,
+    special: true,
+    kind: "special",
+  },
+  {
     id: "2094039933539565721",
     tweetId: "2094039933539565721",
     postedAt: "2026-08-30",
@@ -32,7 +60,7 @@ export const ARCHIVE: ArchiveEntry[] = [
     tags: ["告知", "特別"],
     year: null,
     media: [m("announce-2026-08-30")],
-    likes: 9,
+    likes: 16,
     special: true,
     kind: "special",
   },
@@ -919,7 +947,7 @@ export const META = {
   series: "一日一回るーちゃんツイート",
   seriesStart: "2026-02",
   seriesReliableFrom: "2026-05-29",
-  collectedAt: "2026-08-31",
+  collectedAt: "2026-09-13",
   localMedia: true,
   notes: [
     "元アカウント @Miru620_fandead のメディア欄・投稿から収集",
@@ -932,12 +960,13 @@ export const META = {
     "本人談: 2022/2/24 引退発表は国公立受験前日と重なった",
     "本人談: 2026/8/17〜24 は仕事多忙のため休止。当初「8/25(土)再開」と告知したが 8/21 に訂正（正しい土曜は 8/22）。8/24 に「明日から再開」と再告知し、8/25 にシリーズ再開",
     "本人談: 2026/8/30 に低浮上告知。理由は仕事ストレス・プライベート・多忙。シリーズは 8/28〜 未投稿",
+    "本人談: 2026/9/6 に近況投稿。同日、るーちゃんアカウントのいいね順最多が 2022/2/14 の発信だったことへの思い出",
   ],
   gaps: [
     "2026-02〜05上旬の「一日一回」シリーズ（検索で未検出）",
     "2026-05-30 / 06-06 / 06-13 / 06-21〜23 / 06-25 / 07-01 / 07-06 / 07-11〜12 / 07-16 / 07-18〜22 / 07-28 / 07-30 / 08-01 / 08-08 / 08-12 / 08-15 — 休止または未検出",
     "2026-08-16〜24 — 本人告知：仕事多忙のため休止。8/25 にシリーズ再開（初の朝活・壺おじ）",
-    "2026-08-28〜29 — 未検出。8/30 に低浮上告知（仕事・プライベート）。8/31 時点でシリーズ再開なし",
+    "2026-08-28〜09-13 — 一日一回シリーズ未再開。8/30 低浮上告知、9/6 近況。8/31 は魔乃アロエ初配信スクショ（るーちゃん以外のため対象外）",
   ],
   milestones: [
     { date: "2019-07-18", label: "ホロライブ3期生としてデビュー" },
@@ -956,7 +985,7 @@ export function tweetUrl(id: string) {
 
 export function mediaFallback(localPath: string) {
   const id = localPath.replace(/^\/archive-media\//, "").replace(/\.jpg$/, "");
-  if (id.startsWith("announce-")) return localPath;
+  if (id.startsWith("announce-") || id.startsWith("memory-")) return localPath;
   return remote(id);
 }
 
