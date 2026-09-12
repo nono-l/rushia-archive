@@ -83,8 +83,28 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
 .animate-fade-up {
   animation: fade-up 0.45s ease-out both;
+}
+
+.img-skeleton {
+  background: linear-gradient(
+    105deg,
+    var(--color-surface) 0%,
+    var(--color-surface-hover) 45%,
+    var(--color-surface) 90%
+  );
+  background-size: 220% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
 }
 
 .bg-mesh {
@@ -96,7 +116,16 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-fade-up {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-fade-up,
+  .img-skeleton {
     animation: none;
+  }
+
+  .img-skeleton {
+    background: var(--color-surface);
   }
 }

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { GROK_PROVIDERS, authEnabled, signIn } from "@/lib/auth/client";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { Navigate } from "@tanstack/react-router";
+import { Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -13,13 +14,26 @@ function LoginPage() {
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  if (!isPending && user) {
+  if (isPending) {
+    return (
+      <main className="grid min-h-dvh place-items-center px-4 py-10">
+        <div className="w-full max-w-sm space-y-4 rounded-2xl border border-border bg-card p-6 sm:p-8">
+          <div className="img-skeleton mx-auto h-3 w-28 rounded-full" />
+          <div className="img-skeleton mx-auto h-6 w-40 rounded-lg" />
+          <div className="img-skeleton h-11 rounded-xl" />
+          <div className="img-skeleton h-11 rounded-xl" />
+        </div>
+      </main>
+    );
+  }
+
+  if (user) {
     return <Navigate to="/" />;
   }
 
   return (
     <main className="grid min-h-dvh place-items-center px-4 py-10">
-      <div className="w-full max-w-sm space-y-5 rounded-2xl border border-border bg-card p-6 shadow-xl sm:p-8">
+      <div className="animate-fade-up w-full max-w-sm space-y-5 rounded-2xl border border-border bg-card p-6 shadow-xl sm:p-8">
         <div className="space-y-1.5 text-center">
           <p className="text-xs font-medium tracking-wide text-primary">
             るーちゃんアーカイブ
@@ -59,9 +73,16 @@ function LoginPage() {
                     })
                     .finally(() => setBusy(null));
                 }}
-                className="flex w-full min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-medium text-fg transition hover:border-primary/40 hover:bg-surface-hover disabled:opacity-60"
+                className="flex w-full min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-medium text-fg transition-[border-color,background-color,transform,opacity] duration-150 hover:border-primary/40 hover:bg-surface-hover active:scale-[0.96] disabled:opacity-60"
               >
-                {busy === p.providerId ? "接続中…" : `${p.label} で続ける`}
+                {busy === p.providerId ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    接続中…
+                  </>
+                ) : (
+                  `${p.label} で続ける`
+                )}
               </button>
             ))}
           </div>

@@ -149,12 +149,17 @@ export function CommentSection({ entryId }: { entryId: string }) {
       </div>
 
       {loading ? (
-        <p className="flex items-center gap-2 text-xs text-muted">
-          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-          読み込み中…
-        </p>
+        <div className="space-y-2" aria-busy="true" aria-label="コメントを読み込み中">
+          <div className="img-skeleton h-14 rounded-xl" />
+          <div className="img-skeleton h-14 w-5/6 rounded-xl" />
+          <div className="img-skeleton h-10 w-2/3 rounded-xl" />
+        </div>
       ) : tree.length === 0 ? (
-        <p className="text-xs text-muted">まだコメントはありません。最初の一言をどうぞ。</p>
+        <div className="rounded-xl border border-dashed border-border bg-surface/30 px-3 py-6 text-center">
+          <MessageCircle className="mx-auto h-5 w-5 text-faint" />
+          <p className="mt-2 text-xs text-muted">まだコメントはありません</p>
+          <p className="mt-0.5 text-[11px] text-faint">最初の一言をどうぞ</p>
+        </div>
       ) : (
         <ul className="space-y-3">
           {tree.map((node) => (
@@ -229,7 +234,7 @@ export function CommentSection({ entryId }: { entryId: string }) {
                     type="button"
                     disabled={submitting || !draft.trim()}
                     onClick={() => void submit()}
-                    className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-primary/40 bg-primary/15 px-3.5 py-1.5 text-xs font-medium text-primary transition hover:bg-primary/25 disabled:opacity-50"
+                    className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-primary/40 bg-primary/15 px-3.5 py-1.5 text-xs font-medium text-primary transition-[background-color,transform,opacity] duration-150 hover:bg-primary/25 active:scale-[0.96] disabled:opacity-50"
                   >
                     {submitting ? (
                       <Loader2 className="h-3.5 w-3.5 animate-spin" />

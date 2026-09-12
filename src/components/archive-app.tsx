@@ -86,24 +86,41 @@ function SmartImg({
   alt: string;
   className?: string;
 }) {
+  const [phase, setPhase] = useState<"boot" | "ready" | "fail">("boot");
+
+  useEffect(() => {
+    setPhase("boot");
+  }, [src]);
+
   return (
-    <img
-      src={src}
-      alt={alt}
-      loading="lazy"
-      referrerPolicy="no-referrer"
-      className={className}
-      onError={(e) => {
-        const el = e.currentTarget;
-        const fb = mediaFallback(src);
-        if (el.src !== fb && !el.dataset.fallback) {
-          el.dataset.fallback = "1";
-          el.src = fb;
-        } else {
-          el.style.opacity = "0.25";
-        }
-      }}
-    />
+    <>
+      {phase === "boot" && (
+        <span className="img-skeleton pointer-events-none absolute inset-0" aria-hidden />
+      )}
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        referrerPolicy="no-referrer"
+        className={cn(
+          "transition-opacity duration-300 ease-out",
+          phase === "ready" ? "opacity-100" : phase === "fail" ? "opacity-40" : "opacity-0",
+          className,
+        )}
+        onLoad={() => setPhase("ready")}
+        onError={(e) => {
+          const el = e.currentTarget;
+          const fb = mediaFallback(src);
+          if (el.src !== fb && !el.dataset.fallback) {
+            el.dataset.fallback = "1";
+            el.src = fb;
+            return;
+          }
+          setPhase("fail");
+        }}
+      />
+    </>
   );
 }
 
@@ -142,6 +159,7 @@ export function ArchiveApp() {
   const [sort, setSort] = useState<SortKey>("stream-desc");
   const [active, setActive] = useState<ArchiveEntry | null>(null);
   const [mediaIndex, setMediaIndex] = useState(0);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const filtered = useMemo(() => {
     let list = ARCHIVE.filter((e) => {
@@ -165,6 +183,21 @@ export function ArchiveApp() {
     return list;
   }, [query, year, tag, specialOnly, kind, sort]);
 
+  const filtersOn =
+    query.trim() !== "" ||
+    year !== "all" ||
+    tag !== "all" ||
+    specialOnly ||
+    kind !== "all";
+
+  const resetFilters = useCallback(() => {
+    setQuery("");
+    setYear("all");
+    setTag("all");
+    setSpecialOnly(false);
+    setKind("all");
+  }, []);
+
   const stats = useMemo(() => {
     const mediaCount = ARCHIVE.reduce((n, e) => n + e.media.length, 0);
     const daily = ARCHIVE.filter((e) => e.kind !== "memory").length;
@@ -176,9 +209,25 @@ export function ArchiveApp() {
   const openEntry = useCallback((entry: ArchiveEntry) => {
     setActive(entry);
     setMediaIndex(0);
+    requestAnimationFrame(() => setSheetOpen(true));
   }, []);
 
-  const closeEntry = useCallback(() => setActive(null), []);
+  const closeEntry = useCallback(() => setSheetOpen(false), []);
+
+  useEffect(() => {
+    if (sheetOpen || !active) return;
+    const t = window.setTimeout(() => setActive(null), 180);
+    return () => window.clearTimeout(t);
+  }, [sheetOpen, active]);
+
+  useEffect(() => {
+    if (!active) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [active]);
 
   useEffect(() => {
     if (!active) return;
@@ -307,14 +356,24 @@ export function ArchiveApp() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="タイトル・メモ・タグで検索…"
-                className="w-full rounded-xl border border-border bg-surface py-2.5 pl-10 pr-3 text-sm text-fg outline-none transition placeholder:text-faint focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
+                className="w-full rounded-xl border border-border bg-surface py-2.5 pl-10 pr-10 text-sm text-fg outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-faint focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
               />
+              {query && (
+                <button
+                  type="button"
+                  aria-label="検索をクリア"
+                  onClick={() => setQuery("")}
+                  className="absolute right-1.5 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-lg text-faint transition-[color,background-color] duration-150 hover:bg-surface-hover hover:text-fg"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
             </label>
             <div className="flex flex-wrap items-center gap-2">
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as SortKey)}
-                className="rounded-xl border border-border bg-surface px-3 py-2.5 text-xs text-fg outline-none focus:border-primary/50"
+                className="min-h-11 rounded-xl border border-border bg-surface px-3 py-2.5 text-xs text-fg outline-none transition-[border-color] duration-150 focus:border-primary/50"
               >
                 <option value="stream-desc">配信日 新しい順</option>
                 <option value="stream-asc">配信日 古い順</option>
@@ -325,7 +384,7 @@ export function ArchiveApp() {
                 type="button"
                 onClick={() => setSpecialOnly((v) => !v)}
                 className={cn(
-                  "inline-flex min-h-11 items-center gap-1.5 rounded-xl border px-3 py-2.5 text-xs font-medium transition",
+                  "inline-flex min-h-11 items-center gap-1.5 rounded-xl border px-3 py-2.5 text-xs font-medium transition-[background-color,color,border-color,transform] duration-150 active:scale-[0.96]",
                   specialOnly
                     ? "border-accent/40 bg-accent/15 text-accent"
                     : "border-border bg-surface text-muted hover:text-fg",
@@ -382,9 +441,22 @@ export function ArchiveApp() {
             ))}
           </div>
 
-          <p className="text-xs text-muted">
-            表示中 <span className="font-semibold text-fg">{filtered.length}</span> /{" "}
-            {ARCHIVE.length} 件
+          <p className="flex flex-wrap items-center gap-2 text-xs text-muted">
+            表示中{" "}
+            <span className="font-semibold tabular-nums text-fg">
+              {filtered.length}
+            </span>{" "}
+            / {ARCHIVE.length} 件
+            {filtersOn && (
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="inline-flex min-h-8 items-center gap-1 rounded-full border border-border bg-surface px-2.5 text-[11px] text-muted transition-[color,border-color,background-color] duration-150 hover:border-primary/40 hover:text-primary"
+              >
+                <X className="h-3 w-3" />
+                フィルタ解除
+              </button>
+            )}
           </p>
         </section>
 
@@ -392,18 +464,18 @@ export function ArchiveApp() {
           {filtered.map((entry, i) => (
             <article
               key={entry.id}
-              className="animate-fade-up group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition hover:border-primary/35 hover:shadow-[0_0_0_1px_var(--color-glow)]"
-              style={{ animationDelay: `${Math.min(i, 12) * 30}ms` }}
+              className="animate-fade-up group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-[border-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-[0_0_0_1px_var(--color-glow)]"
+              style={{ animationDelay: `${Math.min(i, 8) * 40}ms` }}
             >
               <button
                 type="button"
                 onClick={() => openEntry(entry)}
-                className="relative aspect-video w-full overflow-hidden bg-bg-elevated text-left"
+                className="relative aspect-video w-full overflow-hidden bg-bg-elevated text-left transition-transform duration-150 ease-out active:scale-[0.99]"
               >
                 <SmartImg
                   src={entry.media[0]}
                   alt={entry.title}
-                  className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+                  className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.03]"
                 />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-bg/90 via-bg/40 to-transparent p-3 pt-10">
                   <p className="text-[11px] font-medium text-primary">
@@ -468,20 +540,22 @@ export function ArchiveApp() {
         </section>
 
         {filtered.length === 0 && (
-          <div className="mt-10 rounded-2xl border border-dashed border-border bg-surface/40 px-6 py-12 text-center">
-            <p className="text-sm text-muted">該当する投稿がありません</p>
+          <div className="mt-8 flex flex-col items-center rounded-2xl border border-dashed border-border bg-surface/40 px-6 py-14 text-center">
+            <span className="mb-3 grid h-12 w-12 place-items-center rounded-full bg-primary/10 text-primary ring-1 ring-primary/25">
+              <ButterflyIcon className="h-6 w-6" />
+            </span>
+            <p className="font-display text-sm font-semibold tracking-wide text-fg">
+              条件に合う投稿がありません
+            </p>
+            <p className="mt-1.5 max-w-xs text-xs leading-relaxed text-muted">
+              検索語や年・タグを緩めると見つかります。
+            </p>
             <button
               type="button"
-              onClick={() => {
-                setQuery("");
-                setYear("all");
-                setTag("all");
-                setSpecialOnly(false);
-                setKind("all");
-              }}
-              className="mt-3 text-xs font-medium text-primary hover:underline"
+              onClick={resetFilters}
+              className="mt-4 inline-flex min-h-11 items-center rounded-full border border-primary/40 bg-primary/15 px-4 text-xs font-medium text-primary transition-[background-color,transform] duration-150 hover:bg-primary/25 active:scale-[0.96]"
             >
-              フィルタをリセット
+              すべて表示する
             </button>
           </div>
         )}
@@ -526,11 +600,21 @@ export function ArchiveApp() {
           role="dialog"
           aria-modal="true"
           aria-label={active.title}
-          className="fixed inset-0 z-50 flex items-end justify-center bg-bg/80 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+          className={cn(
+            "fixed inset-0 z-50 flex items-end justify-center bg-bg/80 p-0 backdrop-blur-sm sm:items-center sm:p-4",
+            "transition-opacity duration-200 ease-out",
+            sheetOpen ? "opacity-100" : "opacity-0",
+          )}
           onClick={closeEntry}
         >
           <div
-            className="flex max-h-[min(94dvh,920px)] w-full max-w-3xl flex-col overflow-hidden rounded-t-2xl border border-border bg-card shadow-2xl sm:rounded-2xl"
+            className={cn(
+              "flex max-h-[min(94dvh,920px)] w-full max-w-3xl flex-col overflow-hidden rounded-t-2xl border border-border bg-card shadow-2xl sm:rounded-2xl",
+              "transition-[transform,opacity] duration-200 ease-out",
+              sheetOpen
+                ? "translate-y-0 opacity-100"
+                : "translate-y-3 opacity-0 sm:translate-y-2",
+            )}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative flex max-h-[42dvh] items-center justify-center bg-bg-elevated sm:max-h-[46dvh]">
@@ -550,7 +634,7 @@ export function ArchiveApp() {
                           (i - 1 + active.media.length) % active.media.length,
                       )
                     }
-                    className="absolute left-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-bg/70 text-fg backdrop-blur transition hover:bg-surface"
+                    className="absolute left-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-bg/70 text-fg backdrop-blur transition-[background-color,transform] duration-150 hover:bg-surface active:scale-[0.96]"
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
@@ -560,7 +644,7 @@ export function ArchiveApp() {
                     onClick={() =>
                       setMediaIndex((i) => (i + 1) % active.media.length)
                     }
-                    className="absolute right-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-bg/70 text-fg backdrop-blur transition hover:bg-surface"
+                    className="absolute right-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-bg/70 text-fg backdrop-blur transition-[background-color,transform] duration-150 hover:bg-surface active:scale-[0.96]"
                   >
                     <ChevronRight className="h-5 w-5" />
                   </button>
@@ -573,7 +657,7 @@ export function ArchiveApp() {
                 type="button"
                 aria-label="閉じる"
                 onClick={closeEntry}
-                className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-bg/75 text-fg backdrop-blur hover:bg-surface"
+                className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-bg/75 text-fg backdrop-blur transition-[background-color,transform] duration-150 hover:bg-surface active:scale-[0.96]"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -652,7 +736,7 @@ function Chip({
       type="button"
       onClick={onClick}
       className={cn(
-        "min-h-8 rounded-full px-2.5 py-1 text-[11px] font-medium transition",
+        "min-h-9 rounded-full px-2.5 py-1 text-[11px] font-medium transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.96]",
         active
           ? "bg-primary text-bg"
           : "bg-surface text-muted ring-1 ring-border hover:text-fg",
