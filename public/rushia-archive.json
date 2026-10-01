@@ -9,7 +9,7 @@
     "series": "一日一回るーちゃんツイート",
     "seriesStart": "2026-02",
     "seriesReliableFrom": "2026-05-29",
-    "collectedAt": "2026-09-18",
+    "collectedAt": "2026-10-02",
     "localMedia": true,
     "notes": [
       "元アカウント @Miru620_fandead のメディア欄・投稿から収集",
@@ -23,14 +23,16 @@
       "本人談: 2026/8/17〜24 は仕事多忙のため休止。当初「8/25(土)再開」と告知したが 8/21 に訂正（正しい土曜は 8/22）。8/24 に「明日から再開」と再告知し、8/25 にシリーズ再開",
       "本人談: 2026/8/30 に低浮上告知。理由は仕事ストレス・プライベート・多忙。シリーズは 8/28〜 未投稿",
       "本人談: 2026/9/6 に近況投稿。同日、るーちゃんアカウントのいいね順最多が 2022/2/14 の発信だったことへの思い出",
-      "本人談: 2026/9/13 に「お久しぶりです」投稿のあと、同日 一日一回シリーズ再開（スマブラSP）"
+      "本人談: 2026/9/13 に「お久しぶりです」投稿のあと、同日 一日一回シリーズ再開（スマブラSP）",
+      "本人談: 2026/9/20 未明にシルバーウィークの近況。同日、壺おじ初挑戦（2020/7/12）でシリーズを1本投稿"
     ],
     "gaps": [
       "2026-02〜05上旬の「一日一回」シリーズ（検索で未検出）",
       "2026-05-30 / 06-06 / 06-13 / 06-21〜23 / 06-25 / 07-01 / 07-06 / 07-11〜12 / 07-16 / 07-18〜22 / 07-28 / 07-30 / 08-01 / 08-08 / 08-12 / 08-15 — 休止または未検出",
       "2026-08-16〜24 — 本人告知：仕事多忙のため休止。8/25 にシリーズ再開（初の朝活・壺おじ）",
       "2026-08-28〜09-12 — 一日一回シリーズ未投稿。8/30 低浮上告知、9/6 近況。8/31 は魔乃アロエ初配信スクショ（るーちゃん以外のため対象外）",
-      "2026-09-14〜17 — シリーズ再開翌日以降は未検出。9/18 昼時点で再開は 9/13 スマブラSP のみ"
+      "2026-09-14〜19 — 9/13 スマブラSP の翌日以降は未投稿",
+      "2026-09-21〜10-01 — 9/20 壺おじ初挑戦のあと未検出。10/2 早朝時点でシリーズ再開なし"
     ],
     "milestones": [
       {
@@ -63,9 +65,76 @@
       }
     ]
   },
-  "count": 71,
-  "mediaCount": 75,
+  "count": 74,
+  "mediaCount": 78,
   "entries": [
+    {
+      "id": "2101650080444887421",
+      "tweetId": "2101650080444887421",
+      "postedAt": "2026-09-20",
+      "streamDate": "2020-07-12",
+      "title": "壺おじ・初挑戦",
+      "note": "シルバーウィーク中のシリーズ再開。壺おじに初挑戦した時のスクショ。",
+      "tags": [
+        "ゲーム"
+      ],
+      "year": 2020,
+      "media": [
+        "/archive-media/HSqOlWAbwAAKFeR.jpg"
+      ],
+      "likes": 24,
+      "kind": "daily",
+      "tweetUrl": "https://x.com/Miru620_fandead/status/2101650080444887421",
+      "mediaRemote": [
+        "https://pbs.twimg.com/media/HSqOlWAbwAAKFeR?format=jpg&name=large"
+      ]
+    },
+    {
+      "id": "2101626440458686962",
+      "tweetId": "2101626440458686962",
+      "postedAt": "2026-09-20",
+      "streamDate": null,
+      "title": "今日はるーちゃんツイート",
+      "note": "しばらく止めていたシリーズを、この日やろうかな、との前置き。",
+      "tags": [
+        "告知",
+        "特別"
+      ],
+      "year": null,
+      "media": [
+        "/archive-media/announce-2026-09-20a.jpg"
+      ],
+      "likes": 14,
+      "special": true,
+      "kind": "special",
+      "tweetUrl": "https://x.com/Miru620_fandead/status/2101626440458686962",
+      "mediaRemote": [
+        "/archive-media/announce-2026-09-20a.jpg"
+      ]
+    },
+    {
+      "id": "2101329540832280845",
+      "tweetId": "2101329540832280845",
+      "postedAt": "2026-09-20",
+      "streamDate": null,
+      "title": "シルバーウィーク",
+      "note": "バタバタの1週間が終わりシルバーウィーク。Xを見る暇がなく、いいねとリポストで済ませていた、との近況。",
+      "tags": [
+        "告知",
+        "特別"
+      ],
+      "year": null,
+      "media": [
+        "/archive-media/announce-2026-09-20-sw.jpg"
+      ],
+      "likes": 13,
+      "special": true,
+      "kind": "special",
+      "tweetUrl": "https://x.com/Miru620_fandead/status/2101329540832280845",
+      "mediaRemote": [
+        "/archive-media/announce-2026-09-20-sw.jpg"
+      ]
+    },
     {
       "id": "2099120927023718791",
       "tweetId": "2099120927023718791",
@@ -81,7 +150,7 @@
       "media": [
         "/archive-media/HSGSF_ta0AATZXS.jpg"
       ],
-      "likes": 20,
+      "likes": 24,
       "kind": "daily",
       "tweetUrl": "https://x.com/Miru620_fandead/status/2099120927023718791",
       "mediaRemote": [
@@ -103,7 +172,7 @@
       "media": [
         "/archive-media/announce-2026-09-13.jpg"
       ],
-      "likes": 29,
+      "likes": 32,
       "special": true,
       "kind": "special",
       "tweetUrl": "https://x.com/Miru620_fandead/status/2099050746411163788",
