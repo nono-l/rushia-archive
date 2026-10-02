@@ -4,8 +4,17 @@ import { GROK_PROVIDERS, authEnabled, signIn } from "@/lib/auth/client";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { Navigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
+import { articleDateHead } from "@/lib/page-date";
+import { PAGE_DATES } from "@/lib/page-dates.generated";
 
 export const Route = createFileRoute("/login")({
+  head: () => {
+    const dates = articleDateHead(PAGE_DATES["/login"] ?? {});
+    return {
+      meta: [{ title: "ログイン · るーちゃんアーカイブ" }, ...dates.meta],
+      scripts: dates.scripts,
+    };
+  },
   component: LoginPage,
 });
 
